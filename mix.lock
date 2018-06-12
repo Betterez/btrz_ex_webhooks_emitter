@@ -1,7 +1,7 @@
 %{
   "base64url": {:hex, :base64url, "0.0.1", "36a90125f5948e3afd7be97662a1504b934dd5dac78451ca6e9abf85a10286be", [:rebar], [], "hexpm"},
   "btrz_ex_webhooks_emitter": {:git, "git://github.com/Betterez/btrz-webhooks-denied-fields.git", "8bf059725261e431bc3e592d15c3ae463c887355", []},
-  "btrz_webhooks_denied_fields": {:git, "git://github.com/Betterez/btrz-webhooks-denied-fields.git", "a39dfe94c8eaa315b597392531fa739b6ad1e224", []},
+  "btrz_webhooks_denied_fields": {:hex, :btrz_webhooks_denied_fields, "0.1.1", "a74aabd8f61a261aa10be1b54ca0b9fe807a5228d82072ca263443efaecf4a7d", [:mix], [{:poison, "~> 3.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm"},
   "btrz_webhooks_emitter": {:git, "git://github.com/Betterez/btrz-webhooks-denied-fields.git", "8bf059725261e431bc3e592d15c3ae463c887355", []},
   "certifi": {:hex, :certifi, "2.3.1", "d0f424232390bf47d82da8478022301c561cf6445b5b5fb6a84d49a9e76d2639", [:rebar3], [{:parse_trans, "3.2.0", [hex: :parse_trans, repo: "hexpm", optional: false]}], "hexpm"},
   "earmark": {:hex, :earmark, "1.2.5", "4d21980d5d2862a2e13ec3c49ad9ad783ffc7ca5769cf6ff891a4553fbaae761", [:mix], [], "hexpm"},
