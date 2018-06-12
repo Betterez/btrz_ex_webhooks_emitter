@@ -40,7 +40,8 @@ defmodule BtrzWebhooksEmitter.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:poison, "~> 3.0"},
       {:uuid, "~> 1.1"},
-      {:btrz_webhooks_denied_fields, git: "git://github.com/Betterez/btrz-webhooks-denied-fields.git"},
+      {:btrz_webhooks_denied_fields,
+       git: "git://github.com/Betterez/btrz-webhooks-denied-fields.git"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:junit_formatter, "~> 2.1", only: :test}
