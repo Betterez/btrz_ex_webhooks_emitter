@@ -8,7 +8,9 @@ defmodule BtrzWebhooksEmitter.Application do
   Starts the BtrzWebhooksEmitter.
   """
   def start(_type, _args) do
-    queue_url = System.get_env("SQS_QUEUE_URL") || Application.get_env(:btrz_ex_webhooks_emitter, :queue_url)
+    queue_url =
+      System.get_env("SQS_QUEUE_URL") ||
+        Application.get_env(:btrz_ex_webhooks_emitter, :queue_url)
 
     children = [
       %{

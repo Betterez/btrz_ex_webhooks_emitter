@@ -14,7 +14,7 @@ defmodule BtrzWebhooksEmitter do
   ```elixir
   config :btrz_ex_webhooks_emitter, queue_url: "id/name"
   ```
-  
+
   If one of them is missing the messages will be ignored.
 
   ## How to use
@@ -52,12 +52,14 @@ defmodule BtrzWebhooksEmitter do
       not is_binary(attrs["provider_id"]) ->
         Logger.error("provider_id is missing")
         :error
+
       not is_binary(attrs["api_key"]) ->
         Logger.error("api_key is missing")
         :error
-      true -> :ok
-    end
 
+      true ->
+        :ok
+    end
   end
 
   @doc false
