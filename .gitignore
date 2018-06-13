@@ -5,6 +5,7 @@ erl_crash.dump
 *.ez
 *.beam
 .tool-versions
+doc/
 
 # vscode files
 /.elixir_ls
