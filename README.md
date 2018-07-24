@@ -2,6 +2,9 @@
 
 Betterez elixir client for emitting webhooks to the SQS queue.
 
+## Documentation
+API documentation at HexDocs [https://hexdocs.pm/btrz_ex_webhooks_emitter](https://hexdocs.pm/btrz_ex_webhooks_emitter)
+
 ## Installation
 
 ```elixir

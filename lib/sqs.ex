@@ -1,6 +1,6 @@
 defmodule BtrzWebhooksEmitter.SQS do
   @moduledoc """
-  Genserver for emitting events to the Betterez AWS SQS
+  Genserver for emitting events to the configured AWS SQS
 
   If there is no `SQS_QUEUE_URL`, the GenServer will be started with `:ignore` and the process will exit normally.
   """
