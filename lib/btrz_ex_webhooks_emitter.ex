@@ -10,7 +10,7 @@ defmodule BtrzWebhooksEmitter do
   * AWS_SERVICE_SECRET
   * SQS_QUEUE_URL
 
-  Or you can set `SQS_QUEUE_URL` in your config:
+  You can set `SQS_QUEUE_URL` in your config:
   ```elixir
   config :btrz_ex_webhooks_emitter, queue_url: "id/name"
   ```
@@ -18,6 +18,15 @@ defmodule BtrzWebhooksEmitter do
   If one of them is missing the messages will be ignored.
 
   ## How to use
+
+  You have to send a map with the following required (string) keys:
+   * "provider_id"
+   * "api_key"
+   * "data"
+
+  Optional keys:
+   * "url"
+
   ```elixir
   message = %{
     "provider_id" => "123",
@@ -41,6 +50,7 @@ defmodule BtrzWebhooksEmitter do
     end
   end
 
+  @doc false
   @spec validate_fields(binary, map) :: :ok | :error
   defp validate_fields(event_name, _attrs) when not is_binary(event_name) do
     Logger.error("event_name is missing")
@@ -76,15 +86,24 @@ defmodule BtrzWebhooksEmitter do
   """
   @spec build_message(binary, map) :: binary
   def build_message(event_name, attrs) do
-    Poison.encode!(%{
+    %{
       id: UUID.uuid4(),
       ts: DateTime.utc_now(),
       providerId: attrs["provider_id"],
       apiKey: attrs["api_key"],
       event: event_name,
       data: filter_fields(event_name, attrs["data"])
-    })
+    }
+    |> maybe_put_url(attrs)
+    |> Poison.encode!()
   end
+
+  @doc false
+  defp maybe_put_url(message, %{"url" => url}) do
+    Map.put_new(message, "url", url)
+  end
+
+  defp maybe_put_url(message, _), do: message
 
   @doc false
   @spec filter_fields(binary, map | any) :: map | any

@@ -61,6 +61,27 @@ defmodule BtrzWebhooksEmitterTest do
       assert built["data"] == %{"hi" => "you"}
     end
 
+    test "build_message using optional url" do
+      message = %{
+        "provider_id" => "123",
+        "api_key" => "123",
+        "data" => %{"hi" => "you"},
+        "url" => "https://pretty.url/"
+      }
+
+      built = Poison.decode!(BtrzWebhooksEmitter.build_message("test.event", message))
+      assert built["event"] == "test.event"
+
+      assert built["id"] =~
+               ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+
+      assert is_binary(built["ts"]) == true
+      assert built["apiKey"] == message["api_key"]
+      assert built["providerId"] == message["provider_id"]
+      assert built["data"] == %{"hi" => "you"}
+      assert built["url"] == message["url"]
+    end
+
     test "build_message using a denied field" do
       message = %{
         "provider_id" => "123",
