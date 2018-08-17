@@ -9,7 +9,7 @@ API documentation at HexDocs [https://hexdocs.pm/btrz_ex_webhooks_emitter](https
 
 ```elixir
 def deps do
-  [{:btrz_ex_webhooks_emitter, "~> 0.1.0"}]
+  [{:btrz_ex_webhooks_emitter, "~> 0.2.0"}]
 end
 ```
 ## Configuration
