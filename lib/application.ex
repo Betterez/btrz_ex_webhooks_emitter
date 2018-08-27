@@ -17,7 +17,7 @@ defmodule BtrzWebhooksEmitter.Application do
         id: :btrz_webhooks_emitter_sqs,
         start:
           {BtrzWebhooksEmitter.SQS, :start_link,
-           [[queue_url: queue_url], [name: BtrzWebhooksEmitter.SQS]]}
+           [[queue_url: queue_url], [name: :btrz_webhooks_emitter_sqs]]}
       }
     ]
 

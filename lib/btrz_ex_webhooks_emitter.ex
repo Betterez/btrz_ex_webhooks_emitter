@@ -38,34 +38,74 @@ defmodule BtrzWebhooksEmitter do
   """
   require Logger
 
+  @sqs_server :btrz_webhooks_emitter_sqs
+
   @doc """
   Builds and sends messages asynchrounously to the BtrzWebhooksEmitter.SQS
+  If there is a validation error in your `attrs` it will return `:error` and log the error, otherwise always `:ok`.
   """
-  @spec emit(binary, map) :: :ok
+  @spec emit(binary, map) :: :ok | :error
   def emit(event_name, attrs) do
-    with :ok <- validate_fields(event_name, attrs),
-         true <- service_started?(BtrzWebhooksEmitter.SQS),
-         message <- build_message(event_name, attrs) do
-      GenServer.cast(BtrzWebhooksEmitter.SQS, {:emit, message})
+    case validate_and_build_message(event_name, attrs) do
+      {:ok, message} ->
+        BtrzWebhooksEmitter.SQS.emit(@sqs_server, message)
+
+      {:error, reason} ->
+        Logger.error("cannot emit: #{inspect(reason)}")
+        :error
+    end
+  end
+
+  @doc """
+  Builds and sends messages synchrounously to the BtrzWebhooksEmitter.SQS
+  For particular use, try always to use emit/2 if possible.
+
+  Returns `{:ok, term}` or `{:error, term}`
+  """
+  @spec emit_sync(binary, map) :: BtrzWebhooksEmitter.SQS.emit_sync_response()
+  def emit_sync(event_name, attrs) do
+    case validate_and_build_message(event_name, attrs) do
+      {:ok, message} ->
+        BtrzWebhooksEmitter.SQS.emit_sync(@sqs_server, message)
+
+      {:error, reason} ->
+        Logger.error("cannot emit: #{inspect(reason)}")
+        {:error, reason}
     end
   end
 
   @doc false
-  @spec validate_fields(binary, map) :: :ok | :error
+  @spec validate_and_build_message(binary, map) :: {:ok, map} | {:error, any}
+  defp validate_and_build_message(event_name, attrs) do
+    with :ok <- validate_fields(event_name, attrs),
+         true <- service_started?(@sqs_server),
+         message <- build_message(event_name, attrs) do
+      {:ok, message}
+    else
+      {:error, reason} ->
+        {:error, reason}
+
+      false ->
+        {:error, "BtrzWebhooksEmitter.SQS GenServer is down"}
+
+      e ->
+        {:error, e}
+    end
+  end
+
+  @doc false
+  @spec validate_fields(binary, map) :: :ok | {:error, String.t()}
   defp validate_fields(event_name, _attrs) when not is_binary(event_name) do
-    Logger.error("event_name is missing")
-    :error
+    {:error, "event_name is missing"}
   end
 
   defp validate_fields(_event_name, attrs) do
     cond do
       not is_binary(attrs["provider_id"]) ->
-        Logger.error("provider_id is missing")
-        :error
+        {:error, "provider_id is missing"}
 
       not is_binary(attrs["api_key"]) ->
-        Logger.error("api_key is missing")
-        :error
+        {:error, "api_key is missing"}
 
       true ->
         :ok
@@ -82,9 +122,9 @@ defmodule BtrzWebhooksEmitter do
   end
 
   @doc """
-  Returns the message json encoded.
+  Returns the message map.
   """
-  @spec build_message(binary, map) :: binary
+  @spec build_message(binary, map) :: map
   def build_message(event_name, attrs) do
     %{
       id: UUID.uuid4(),
@@ -95,12 +135,11 @@ defmodule BtrzWebhooksEmitter do
       data: filter_fields(event_name, attrs["data"])
     }
     |> maybe_put_url(attrs)
-    |> Poison.encode!()
   end
 
   @doc false
   defp maybe_put_url(message, %{"url" => url}) do
-    Map.put_new(message, "url", url)
+    Map.put_new(message, :url, url)
   end
 
   defp maybe_put_url(message, _), do: message

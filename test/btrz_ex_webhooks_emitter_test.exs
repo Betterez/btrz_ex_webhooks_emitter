@@ -41,6 +41,46 @@ defmodule BtrzWebhooksEmitterTest do
     end
   end
 
+  describe("emit_sync/2") do
+    test "won't emit event if event_name is not binary" do
+      message = %{
+        "api_key" => "123",
+        "provider_id" => "123",
+        "data" => %{}
+      }
+
+      assert {:error, _} = BtrzWebhooksEmitter.emit_sync(:myevent, message)
+    end
+
+    test "won't emit event if provider_id is missing" do
+      message = %{
+        "api_key" => "123",
+        "data" => %{}
+      }
+
+      assert {:error, _} = BtrzWebhooksEmitter.emit_sync("test.event", message)
+    end
+
+    test "won't emit event if api_key is missing" do
+      message = %{
+        "provider_id" => "123",
+        "data" => %{}
+      }
+
+      assert {:error, _} = BtrzWebhooksEmitter.emit_sync("test.event", message)
+    end
+
+    test "emit webhook to test sqs" do
+      message = %{
+        "provider_id" => "123",
+        "api_key" => "123",
+        "data" => %{}
+      }
+
+      assert {:ok, _} = BtrzWebhooksEmitter.emit_sync("test.event", message)
+    end
+  end
+
   describe("build_message/2") do
     test "build_message with the correct fields" do
       message = %{
@@ -49,16 +89,16 @@ defmodule BtrzWebhooksEmitterTest do
         "data" => %{"hi" => "you"}
       }
 
-      built = Poison.decode!(BtrzWebhooksEmitter.build_message("test.event", message))
-      assert built["event"] == "test.event"
+      built = BtrzWebhooksEmitter.build_message("test.event", message)
+      assert built.event == "test.event"
 
-      assert built["id"] =~
+      assert built.id =~
                ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
-      assert is_binary(built["ts"]) == true
-      assert built["apiKey"] == message["api_key"]
-      assert built["providerId"] == message["provider_id"]
-      assert built["data"] == %{"hi" => "you"}
+      assert built.ts |> DateTime.to_unix() |> is_integer() == true
+      assert built.apiKey == message["api_key"]
+      assert built.providerId == message["provider_id"]
+      assert built.data == %{"hi" => "you"}
     end
 
     test "build_message using optional url" do
@@ -69,17 +109,17 @@ defmodule BtrzWebhooksEmitterTest do
         "url" => "https://pretty.url/"
       }
 
-      built = Poison.decode!(BtrzWebhooksEmitter.build_message("test.event", message))
-      assert built["event"] == "test.event"
+      built = BtrzWebhooksEmitter.build_message("test.event", message)
+      assert built.event == "test.event"
 
-      assert built["id"] =~
+      assert built.id =~
                ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
-      assert is_binary(built["ts"]) == true
-      assert built["apiKey"] == message["api_key"]
-      assert built["providerId"] == message["provider_id"]
-      assert built["data"] == %{"hi" => "you"}
-      assert built["url"] == message["url"]
+      assert built.ts |> DateTime.to_unix() |> is_integer() == true
+      assert built.apiKey == message["api_key"]
+      assert built.providerId == message["provider_id"]
+      assert built.data == %{"hi" => "you"}
+      assert built.url == message["url"]
     end
 
     test "build_message using a denied field" do
@@ -89,8 +129,8 @@ defmodule BtrzWebhooksEmitterTest do
         "data" => %{"password" => "secret"}
       }
 
-      built = Poison.decode!(BtrzWebhooksEmitter.build_message("test.event", message))
-      assert built["data"] == %{}
+      built = BtrzWebhooksEmitter.build_message("test.event", message)
+      assert built.data == %{}
     end
 
     test "build_message using denied fields with multiple wildcards" do
@@ -100,8 +140,8 @@ defmodule BtrzWebhooksEmitterTest do
         "data" => %{"password" => "secret", "credentials" => %{}}
       }
 
-      built = Poison.decode!(BtrzWebhooksEmitter.build_message("customer.created", message))
-      assert built["data"] == %{}
+      built = BtrzWebhooksEmitter.build_message("customer.created", message)
+      assert built.data == %{}
     end
   end
 end
