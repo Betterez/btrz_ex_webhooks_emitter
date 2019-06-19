@@ -15,8 +15,8 @@ defmodule BtrzWebhooksEmitter.SQS do
   @doc """
   Starts a new BtrzWebhooksEmitter process.
   """
-  def start_link(params, opts \\ []) do
-    GenServer.start_link(__MODULE__, Keyword.get(params, :queue_url), opts)
+  def start_link(aws_config, opts \\ []) do
+    GenServer.start_link(__MODULE__, aws_config, opts)
   end
 
   @doc """
@@ -45,9 +45,9 @@ defmodule BtrzWebhooksEmitter.SQS do
     :ignore
   end
 
-  def init(queue_url) do
+  def init(aws_config) do
     state = %{
-      queue: queue_url
+      aws_config: aws_config
     }
 
     {:ok, state}
@@ -58,11 +58,7 @@ defmodule BtrzWebhooksEmitter.SQS do
   If something fails, it will just log the error.
   """
   def handle_cast({:emit, message}, state) do
-    case ExAws.SQS.send_message(
-           state.queue,
-           message
-         )
-         |> ExAws.request() do
+    case send_message(state.aws_config, message) do
       {:error, reason} ->
         Logger.error("#{inspect(reason)}")
 
@@ -79,11 +75,7 @@ defmodule BtrzWebhooksEmitter.SQS do
   """
   def handle_call({:emit, message}, _from, state) do
     result =
-      case ExAws.SQS.send_message(
-             state.queue,
-             message
-           )
-           |> ExAws.request() do
+      case send_message(state.aws_config, message) do
         {:error, reason} ->
           Logger.error("#{inspect(reason)}")
           {:error, reason}
@@ -94,5 +86,13 @@ defmodule BtrzWebhooksEmitter.SQS do
       end
 
     {:reply, result, state}
+  end
+
+  defp send_message(aws_config, message) do
+    ExAws.SQS.send_message(
+      aws_config[:queue],
+      message
+    ) |> IO.inspect(label: "send_message query")
+    |> ExAws.request(aws_config)
   end
 end

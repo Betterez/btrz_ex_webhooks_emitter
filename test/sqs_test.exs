@@ -9,7 +9,7 @@ defmodule BtrzWebhooksEmitter.SQSTest do
         id: :sqs_emitter,
         start:
           {BtrzWebhooksEmitter.SQS, :start_link,
-           [[queue_url: "http://wrong_url"], [name: :sqs_emitter]]}
+           [[queue: "http://wrong_url"], [name: :sqs_emitter]]}
       }
 
       sqs_emitter = start_supervised!(child_spec)
@@ -62,19 +62,5 @@ defmodule BtrzWebhooksEmitter.SQSTest do
 
       assert {:ok, %{status_code: 200}} = BtrzWebhooksEmitter.SQS.emit_sync(@sqs_server, message)
     end
-  end
-
-  test "handle_cast emit" do
-    state = %{queue: Application.get_env(:btrz_ex_webhooks_emitter, :queue_url)}
-
-    message =
-      Poison.encode!(%{
-        "providerId" => "123",
-        "event" => "something_ocurred!",
-        "apiKey" => "123",
-        "data" => %{}
-      })
-
-    assert {:noreply, state} == BtrzWebhooksEmitter.SQS.handle_cast({:emit, message}, state)
   end
 end

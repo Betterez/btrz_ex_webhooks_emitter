@@ -128,7 +128,7 @@ defmodule BtrzWebhooksEmitter do
   def build_message(event_name, attrs) do
     %{
       id: UUID.uuid4(),
-      ts: DateTime.utc_now(),
+      ts: DateTime.utc_now() |> DateTime.to_unix(:millisecond),
       providerId: attrs["provider_id"],
       apiKey: attrs["api_key"],
       event: event_name,

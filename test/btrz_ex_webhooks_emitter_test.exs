@@ -95,7 +95,7 @@ defmodule BtrzWebhooksEmitterTest do
       assert built.id =~
                ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
-      assert built.ts |> DateTime.to_unix() |> is_integer() == true
+      assert is_integer(built.ts) == true
       assert built.apiKey == message["api_key"]
       assert built.providerId == message["provider_id"]
       assert built.data == %{"hi" => "you"}
@@ -115,7 +115,7 @@ defmodule BtrzWebhooksEmitterTest do
       assert built.id =~
                ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
-      assert built.ts |> DateTime.to_unix() |> is_integer() == true
+      assert is_integer(built.ts) == true
       assert built.apiKey == message["api_key"]
       assert built.providerId == message["provider_id"]
       assert built.data == %{"hi" => "you"}
