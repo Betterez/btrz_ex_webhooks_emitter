@@ -92,7 +92,7 @@ defmodule BtrzWebhooksEmitter.SQS do
     ExAws.SQS.send_message(
       aws_config[:queue],
       message
-    ) |> IO.inspect(label: "send_message query")
+    )
     |> ExAws.request(aws_config)
   end
 end
