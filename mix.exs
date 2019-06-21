@@ -2,7 +2,7 @@ defmodule BtrzWebhooksEmitter.MixProject do
   use Mix.Project
 
   @github_url "https://github.com/Betterez/btrz_ex_webhooks_emitter"
-  @version "0.4.0"
+  @version "0.4.1"
 
   def project do
     [
@@ -40,7 +40,7 @@ defmodule BtrzWebhooksEmitter.MixProject do
       {:sweet_xml, "~> 0.6"},
       {:poison, "~> 3.0"},
       {:uuid, "~> 1.1"},
-      {:btrz_webhooks_denied_fields, "~> 0.1.1"},
+      {:btrz_webhooks_denied_fields, "~> 0.1.4"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:junit_formatter, "~> 2.1", only: :test}
