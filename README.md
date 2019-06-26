@@ -16,9 +16,9 @@ end
 This lib will use the following ENV variables:
   * AWS_ACCESS_KEY_ID
   * AWS_SECRET_ACCESS_KEY
-  * SQS_QUEUE_URL (or by config)
+  * SQS_QUEUE_NAME (or by config)
 
-Or you can set `SQS_QUEUE_URL` in your config:
+Or you can set `SQS_QUEUE_NAME` in your config:
 ```elixir
 config :btrz_ex_webhooks_emitter, queue_url: "id/name"
 ```

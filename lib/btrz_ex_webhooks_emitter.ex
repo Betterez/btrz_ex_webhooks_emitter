@@ -8,9 +8,9 @@ defmodule BtrzWebhooksEmitter do
 
   * AWS_SERVICE_KEY
   * AWS_SERVICE_SECRET
-  * SQS_QUEUE_URL
+  * SQS_QUEUE_NAME
 
-  You can set `SQS_QUEUE_URL` in your config:
+  You can set `SQS_QUEUE_NAME` in your config:
   ```elixir
   config :btrz_ex_webhooks_emitter, queue_url: "id/name"
   ```

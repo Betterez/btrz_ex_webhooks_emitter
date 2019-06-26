@@ -2,7 +2,7 @@ defmodule BtrzWebhooksEmitter.MixProject do
   use Mix.Project
 
   @github_url "https://github.com/Betterez/btrz_ex_webhooks_emitter"
-  @version "0.4.1"
+  @version "0.5.0"
 
   def project do
     [
