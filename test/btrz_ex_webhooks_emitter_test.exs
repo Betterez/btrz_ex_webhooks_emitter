@@ -4,7 +4,6 @@ defmodule BtrzWebhooksEmitterTest do
   describe("emit/2") do
     test "won't emit event if event_name is not binary" do
       message = %{
-        "api_key" => "123",
         "provider_id" => "123",
         "data" => %{}
       }
@@ -14,16 +13,6 @@ defmodule BtrzWebhooksEmitterTest do
 
     test "won't emit event if provider_id is missing" do
       message = %{
-        "api_key" => "123",
-        "data" => %{}
-      }
-
-      assert :error == BtrzWebhooksEmitter.emit("test.event", message)
-    end
-
-    test "won't emit event if api_key is missing" do
-      message = %{
-        "provider_id" => "123",
         "data" => %{}
       }
 
@@ -33,7 +22,6 @@ defmodule BtrzWebhooksEmitterTest do
     test "emit webhook to test sqs" do
       message = %{
         "provider_id" => "123",
-        "api_key" => "123",
         "data" => %{}
       }
 
@@ -44,7 +32,6 @@ defmodule BtrzWebhooksEmitterTest do
   describe("emit_sync/2") do
     test "won't emit event if event_name is not binary" do
       message = %{
-        "api_key" => "123",
         "provider_id" => "123",
         "data" => %{}
       }
@@ -54,16 +41,6 @@ defmodule BtrzWebhooksEmitterTest do
 
     test "won't emit event if provider_id is missing" do
       message = %{
-        "api_key" => "123",
-        "data" => %{}
-      }
-
-      assert {:error, _} = BtrzWebhooksEmitter.emit_sync("test.event", message)
-    end
-
-    test "won't emit event if api_key is missing" do
-      message = %{
-        "provider_id" => "123",
         "data" => %{}
       }
 
@@ -73,7 +50,6 @@ defmodule BtrzWebhooksEmitterTest do
     test "emit webhook to test sqs" do
       message = %{
         "provider_id" => "123",
-        "api_key" => "123",
         "data" => %{}
       }
 
@@ -85,7 +61,6 @@ defmodule BtrzWebhooksEmitterTest do
     test "build_message with the correct fields" do
       message = %{
         "provider_id" => "123",
-        "api_key" => "123",
         "data" => %{"hi" => "you"}
       }
 
@@ -96,7 +71,6 @@ defmodule BtrzWebhooksEmitterTest do
                ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
       assert is_integer(built.ts) == true
-      assert built.apiKey == message["api_key"]
       assert built.providerId == message["provider_id"]
       assert built.data == %{"hi" => "you"}
     end
@@ -104,7 +78,6 @@ defmodule BtrzWebhooksEmitterTest do
     test "build_message using optional url" do
       message = %{
         "provider_id" => "123",
-        "api_key" => "123",
         "data" => %{"hi" => "you"},
         "url" => "https://pretty.url/"
       }
@@ -116,7 +89,6 @@ defmodule BtrzWebhooksEmitterTest do
                ~r/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
 
       assert is_integer(built.ts) == true
-      assert built.apiKey == message["api_key"]
       assert built.providerId == message["provider_id"]
       assert built.data == %{"hi" => "you"}
       assert built.url == message["url"]
@@ -125,7 +97,6 @@ defmodule BtrzWebhooksEmitterTest do
     test "build_message using a denied field" do
       message = %{
         "provider_id" => "123",
-        "api_key" => "123",
         "data" => %{"password" => "secret"}
       }
 
@@ -136,7 +107,6 @@ defmodule BtrzWebhooksEmitterTest do
     test "build_message using denied fields with multiple wildcards" do
       message = %{
         "provider_id" => "123",
-        "api_key" => "123",
         "data" => %{"password" => "secret", "credentials" => %{}}
       }
 

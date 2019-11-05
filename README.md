@@ -26,7 +26,6 @@ config :btrz_ex_webhooks_emitter, queue_url: "id/name"
 ```elixir
 message = %{
   "provider_id" => "123",
-  "api_key" => "PROVIDER_PUBLIC_KEY",
   "data" => %{"foo" => "bar"}
 }
 BtrzWebhooksEmitter.emit("transaction.created", message)

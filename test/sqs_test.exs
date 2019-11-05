@@ -20,7 +20,6 @@ defmodule BtrzWebhooksEmitter.SQSTest do
       message = %{
         "providerId" => "123",
         "event" => "something_ocurred!",
-        "apiKey" => "123",
         "data" => %{}
       }
 
@@ -31,7 +30,6 @@ defmodule BtrzWebhooksEmitter.SQSTest do
       message = %{
         "providerId" => "123",
         "event" => "something_ocurred!",
-        "apiKey" => "123",
         "data" => %{}
       }
 
@@ -45,7 +43,6 @@ defmodule BtrzWebhooksEmitter.SQSTest do
       message = %{
         "providerId" => "123",
         "event" => "something_ocurred!",
-        "apiKey" => "123",
         "data" => %{}
       }
 
@@ -56,7 +53,6 @@ defmodule BtrzWebhooksEmitter.SQSTest do
       message = %{
         "providerId" => "123",
         "event" => "something_ocurred!",
-        "apiKey" => "123",
         "data" => %{}
       }
 

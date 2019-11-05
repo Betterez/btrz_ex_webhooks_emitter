@@ -21,7 +21,6 @@ defmodule BtrzWebhooksEmitter do
 
   You have to send a map with the following required (string) keys:
    * "provider_id"
-   * "api_key"
    * "data"
 
   Optional keys:
@@ -30,7 +29,6 @@ defmodule BtrzWebhooksEmitter do
   ```elixir
   message = %{
     "provider_id" => "123",
-    "api_key" => "PROVIDER_PUBLIC_KEY",
     "data" => %{"foo" => "bar"}
   }
   BtrzWebhooksEmitter.emit("transaction.created", message)
@@ -104,9 +102,6 @@ defmodule BtrzWebhooksEmitter do
       not is_binary(attrs["provider_id"]) ->
         {:error, "provider_id is missing"}
 
-      not is_binary(attrs["api_key"]) ->
-        {:error, "api_key is missing"}
-
       true ->
         :ok
     end
@@ -130,7 +125,6 @@ defmodule BtrzWebhooksEmitter do
       id: UUID.uuid4(),
       ts: DateTime.utc_now() |> DateTime.to_unix(:millisecond),
       providerId: attrs["provider_id"],
-      apiKey: attrs["api_key"],
       event: event_name,
       data: filter_fields(event_name, attrs["data"])
     }
