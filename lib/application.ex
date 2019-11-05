@@ -9,7 +9,9 @@ defmodule BtrzWebhooksEmitter.Application do
   """
   def start(_type, _args) do
     aws_config = [
-      queue: System.get_env("SQS_QUEUE_NAME") || Application.get_env(:btrz_ex_webhooks_emitter, :queue_name)
+      queue:
+        System.get_env("SQS_QUEUE_NAME") ||
+          Application.get_env(:btrz_ex_webhooks_emitter, :queue_name)
     ]
 
     children = [
