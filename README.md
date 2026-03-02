@@ -17,6 +17,7 @@ This lib will use the following ENV variables:
   * AWS_ACCESS_KEY_ID
   * AWS_SECRET_ACCESS_KEY
   * SQS_QUEUE_NAME (or by config)
+  * WEBHOOK_COMPRESS (optional) – when set to `zstd` or `gzip` (case-insensitive), the message `data` payload is compressed (base64-encoded) and the message includes an `enc` field; when unset or any other value, messages are sent plain.
 
 Or you can set `SQS_QUEUE_NAME` in your config:
 ```elixir

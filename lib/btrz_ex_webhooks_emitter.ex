@@ -118,18 +118,30 @@ defmodule BtrzWebhooksEmitter do
 
   @doc """
   Returns the message map.
+  When WEBHOOK_COMPRESS is "zstd" or "gzip", compresses only the data field and sets enc.
   """
   @spec build_message(binary, map) :: map
   def build_message(event_name, attrs) do
-    %{
+    data = filter_fields(event_name, attrs["data"])
+    algo = BtrzWebhooksEmitter.Compression.get_compress_algo()
+
+    {payload, add_enc} = maybe_compress_data(data, algo)
+    msg = %{
       id: UUID.uuid4(),
       ts: DateTime.utc_now() |> DateTime.to_unix(:millisecond),
       providerId: attrs["provider_id"],
       event: event_name,
-      data: filter_fields(event_name, attrs["data"])
+      data: payload
     }
-    |> maybe_put_url(attrs)
+    msg = if add_enc, do: Map.put(msg, :enc, algo), else: msg
+    maybe_put_url(msg, attrs)
   end
+
+  defp maybe_compress_data(data, nil), do: {data, false}
+  defp maybe_compress_data(data, algo) when is_map(data) and algo in ["zstd", "gzip"] do
+    {BtrzWebhooksEmitter.Compression.compress(data, algo), true}
+  end
+  defp maybe_compress_data(data, _algo), do: {data, false}
 
   @doc false
   defp maybe_put_url(message, %{"url" => url}) do
