@@ -44,9 +44,19 @@ defmodule BtrzWebhooksEmitter do
   """
   @spec emit(binary, map) :: :ok | :error
   def emit(event_name, attrs) do
+    emit(event_name, attrs, [])
+  end
+
+  @doc """
+  Builds and sends messages asynchrounously to the BtrzWebhooksEmitter.SQS.
+  Accepts an `opts` keyword list with `:queue_url` to override the default SQS queue.
+  If there is a validation error in your `attrs` it will return `:error` and log the error, otherwise always `:ok`.
+  """
+  @spec emit(binary, map, keyword()) :: :ok | :error
+  def emit(event_name, attrs, opts) do
     case validate_and_build_message(event_name, attrs) do
       {:ok, message} ->
-        BtrzWebhooksEmitter.SQS.emit(@sqs_server, message)
+        BtrzWebhooksEmitter.SQS.emit(@sqs_server, message, opts)
 
       {:error, reason} ->
         Logger.error("cannot emit: #{inspect(reason)}")
@@ -62,9 +72,20 @@ defmodule BtrzWebhooksEmitter do
   """
   @spec emit_sync(binary, map) :: BtrzWebhooksEmitter.SQS.emit_sync_response()
   def emit_sync(event_name, attrs) do
+    emit_sync(event_name, attrs, [])
+  end
+
+  @doc """
+  Builds and sends messages synchrounously to the BtrzWebhooksEmitter.SQS.
+  Accepts an `opts` keyword list with `:queue_url` to override the default SQS queue.
+
+  Returns `{:ok, term}` or `{:error, term}`
+  """
+  @spec emit_sync(binary, map, keyword()) :: BtrzWebhooksEmitter.SQS.emit_sync_response()
+  def emit_sync(event_name, attrs, opts) do
     case validate_and_build_message(event_name, attrs) do
       {:ok, message} ->
-        BtrzWebhooksEmitter.SQS.emit_sync(@sqs_server, message)
+        BtrzWebhooksEmitter.SQS.emit_sync(@sqs_server, message, opts)
 
       {:error, reason} ->
         Logger.error("cannot emit: #{inspect(reason)}")

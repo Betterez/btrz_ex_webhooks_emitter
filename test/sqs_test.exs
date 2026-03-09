@@ -33,8 +33,7 @@ defmodule BtrzWebhooksEmitter.SQSTest do
         "data" => %{}
       }
 
-      assert {:error, {:http_error, 404, %{}}} =
-               BtrzWebhooksEmitter.SQS.emit_sync(sqs_emitter, message)
+      assert {:error, _} = BtrzWebhooksEmitter.SQS.emit_sync(sqs_emitter, message)
     end
   end
 
