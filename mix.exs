@@ -42,7 +42,7 @@ defmodule BtrzWebhooksEmitter.MixProject do
       {:uuid, "~> 1.1"},
       {:btrz_webhooks_denied_fields, "~> 0.1.4"},
       {:ezstd, "~> 1.0"},
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+      {:ex_doc, "0.29.0", only: :dev, runtime: false},
       {:excoveralls, "~> 0.8", only: :test},
       {:junit_formatter, "~> 2.1", only: :test}
     ]
