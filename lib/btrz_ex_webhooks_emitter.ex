@@ -147,6 +147,7 @@ defmodule BtrzWebhooksEmitter do
     algo = BtrzWebhooksEmitter.Compression.get_compress_algo()
 
     {payload, add_enc} = maybe_compress_data(data, algo)
+
     msg = %{
       id: UUID.uuid4(),
       ts: DateTime.utc_now() |> DateTime.to_unix(:millisecond),
@@ -154,14 +155,17 @@ defmodule BtrzWebhooksEmitter do
       event: event_name,
       data: payload
     }
+
     msg = if add_enc, do: Map.put(msg, :enc, algo), else: msg
     maybe_put_url(msg, attrs)
   end
 
   defp maybe_compress_data(data, nil), do: {data, false}
+
   defp maybe_compress_data(data, algo) when is_map(data) and algo in ["zstd", "gzip"] do
     {BtrzWebhooksEmitter.Compression.compress(data, algo), true}
   end
+
   defp maybe_compress_data(data, _algo), do: {data, false}
 
   @doc false

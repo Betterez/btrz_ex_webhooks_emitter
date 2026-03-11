@@ -13,7 +13,9 @@ defmodule BtrzWebhooksEmitter.Compression do
   @spec get_compress_algo() :: nil | binary
   def get_compress_algo do
     case System.get_env("WEBHOOK_COMPRESS") do
-      nil -> nil
+      nil ->
+        nil
+
       v when is_binary(v) ->
         normalized = String.downcase(String.trim(v))
         if MapSet.member?(@valid_algos, normalized), do: normalized, else: nil
@@ -32,10 +34,6 @@ defmodule BtrzWebhooksEmitter.Compression do
   end
 
   defp compress_raw(payload, "gzip"), do: :zlib.gzip(payload)
-  defp compress_raw(payload, "zstd") do
-    case :ezstd.compress(payload) do
-      {:ok, compressed} -> compressed
-      {:error, _} = err -> raise "ezstd compress failed: #{inspect(err)}"
-    end
-  end
+
+  defp compress_raw(payload, "zstd"), do: :ezstd.compress(payload)
 end
