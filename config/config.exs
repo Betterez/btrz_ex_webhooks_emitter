@@ -7,6 +7,9 @@ config :ex_aws,
 config :btrz_ex_webhooks_emitter, queue_name: System.get_env("SQS_QUEUE_NAME")
 
 if Mix.env() == :test do
+  config :btrz_ex_webhooks_emitter,
+    queue_name: System.get_env("SQS_QUEUE_NAME") || "000000000000/webhooks-test"
+
   config :btrz_ex_webhooks_emitter, :ex_aws_request_fn, fn _operation, aws_config ->
     case aws_config[:queue] do
       "http://wrong_url" -> {:error, {:http_error, 404, %{}}}
