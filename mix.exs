@@ -13,7 +13,7 @@ defmodule BtrzWebhooksEmitter.MixProject do
       source_url: @github_url,
       homepage_url: @github_url,
       elixir: "~> 1.5",
-      start_permanent: Mix.env() in [:prod, :prod1]
+      start_permanent: Mix.env() in [:prod, :prod1],
       deps: deps(),
       docs: docs(),
       package: package(),
